@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export default function Home() {
   const [navVisible, setNavVisible] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -26,34 +27,75 @@ export default function Home() {
 
       {/* Navigation */}
       <nav className={`fixed top-0 z-[100] w-full glass-panel px-6 py-4 flex justify-between items-center bg-black/40 transition-transform duration-300 ${navVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="flex items-center gap-3 group cursor-pointer">
+        <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
             <img src="/appicon.png" alt="Mighty Logo" className="w-full h-full object-cover" />
           </div>
-          <span className="font-black tracking-[0.2em] text-lg uppercase italic group-hover:tracking-[0.25em] transition-all">MIGHTY</span>
+          <span className="font-black tracking-[0.2em] text-lg uppercase italic group-hover:tracking-[0.25em] transition-all pe-2 -me-2">MIGHTY</span>
         </div>
+
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
-          {['Platform', 'Community', 'FAQ'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors">
-              {item}
-            </a>
-          ))}
+          <a href="/about" className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors">About</a>
+          <a href="/#platform" className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors">Platform</a>
+          <a href="/#community" className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors">Community</a>
+          <a href="/#faq" className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors">FAQ</a>
           <a href="/download/mighty-latest.apk" className="px-5 py-2 bg-white text-black rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-primary hover:text-white transition-all duration-300">
             Download
           </a>
         </div>
-        <div className="md:hidden text-2xl font-black">☰</div>
+
+        {/* Mobile Toggle */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 glass-panel rounded-xl border-white/10 transition-all active:scale-95"
+          aria-label="Toggle Menu"
+        >
+          <span className={`w-5 h-0.5 bg-white rounded-full transition-all duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`w-5 h-0.5 bg-white rounded-full transition-all duration-300 ${mobileMenuOpen ? 'opacity-0 translate-x-3' : ''}`} />
+          <span className={`w-5 h-0.5 bg-white rounded-full transition-all duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
       </nav>
 
+      {/* Mobile Menu Overlay */}
+      <div className={`fixed inset-0 z-[90] md:hidden transition-all duration-500 ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setMobileMenuOpen(false)} />
+        <div className={`absolute right-0 top-0 h-full w-[280px] bg-black border-l border-white/5 p-12 flex flex-col gap-8 transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="flex flex-col gap-6 pt-12">
+            {['Platform', 'Community', 'FAQ'].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-2xl font-black tracking-widest uppercase italic hover:text-primary transition-colors"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+          <div className="mt-auto space-y-4">
+            <a
+              href="/download/mighty-latest.apk"
+              className="w-full py-4 bg-white text-black rounded-xl text-center font-black tracking-widest uppercase italic flex items-center justify-center gap-2"
+            >
+              Download APK
+            </a>
+            <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] text-center">
+              Available for Android
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <main className="relative pt-40 pb-20 px-6 max-w-7xl mx-auto z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-24 min-h-[70vh]">
-          <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left flex flex-col items-center lg:items-start">
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter leading-[1.0] uppercase italic pr-4">
+      <main className="relative pt-32 sm:pt-40 pb-20 px-6 max-w-7xl mx-auto z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24 min-h-[70vh]">
+          <div className="w-full lg:w-1/2 space-y-6 md:space-y-8 text-center lg:text-left flex flex-col items-center lg:items-start">
+            <h1 className="text-5xl sm:text-7xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.85] sm:leading-[0.9] uppercase italic overflow-visible py-4">
               Unleash Your <br />
-              <span className="text-gradient-primary drop-shadow-[0_0_15px_rgba(139,92,246,0.3)] pe-6">Mighty</span> Spirit
+              <span className="text-gradient-primary drop-shadow-[0_0_15px_rgba(139,92,246,0.2)] pe-4 -me-4 inline-block">Mighty</span> Spirit
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-medium max-w-xl leading-relaxed">
               Mighty is the ultimate competitive arena for Free Fire Max. Engage in skill-based tournaments, showcase your dominance, and rise through the ranks in a professional esports ecosystem.
             </p>
             <div className="flex flex-wrap lg:flex-nowrap items-center justify-center lg:justify-start gap-5 pt-8 w-full group/btns">
@@ -77,27 +119,36 @@ export default function Home() {
 
           </div>
 
-          {/* App Preview Mockup - Centered & Responsive */}
+          {/* App Preview Mockup - NEW Frame with ORIGINAL UI */}
           <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-end animate-float">
-            <div className="relative w-full max-w-[320px] aspect-[9/18.5] sm:max-w-[360px]">
-              <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full animate-pulse-slow" />
-              <div className="relative h-full glass-panel rounded-3xl p-3 border-white/20 shadow-2xl overflow-hidden">
-                <div className="w-full h-full bg-[#09090B] rounded-2xl overflow-hidden flex flex-col pt-10">
-                  {/* Fake App UI Header */}
+            <div className="relative w-full max-w-[320px] aspect-[9/19] sm:max-w-[350px] group">
+              {/* Outer Glow */}
+              <div className="absolute inset-0 bg-primary/30 blur-[120px] rounded-[3rem] opacity-50 transition-opacity duration-1000" />
+
+              {/* Phone Frame - Side Rails */}
+              <div className="absolute -left-1 top-24 w-1 h-12 bg-white/10 rounded-l-md border-y border-white/5" /> {/* Volume Up */}
+              <div className="absolute -left-1 top-40 w-1 h-12 bg-white/10 rounded-l-md border-y border-white/5" /> {/* Volume Down */}
+              <div className="absolute -right-1 top-32 w-1 h-16 bg-white/10 rounded-r-md border-y border-white/5" /> {/* Power */}
+
+              {/* Main Chassis */}
+              <div className="relative h-full bg-[#050505] rounded-[3rem] p-3 border-[6px] border-[#1C1C1E] shadow-[0_0_50px_rgba(0,0,0,1)] ring-1 ring-white/10 overflow-hidden">
+                {/* Internal Screen Area */}
+                <div className="relative h-full bg-[#09090B] rounded-[2.2rem] overflow-hidden flex flex-col border border-white/5 pt-10">
+
+                  {/* ORIGINAL UI HEADER */}
                   <div className="px-5 flex justify-between items-center mb-6">
                     <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
                       <img src="/appicon.png" alt="App Icon" className="w-full h-full object-cover" />
                     </div>
-                    <span className="text-white font-black text-xs tracking-[0.3em] italic">MIGHTY</span>
+                    <span className="text-white font-black text-xs tracking-[0.3em] italic pe-2 -me-2">MIGHTY</span>
                     <div className="w-9 h-9" />
                   </div>
 
-                  {/* Carousel Mockup - Loading State */}
+                  {/* ORIGINAL CAROUSEL */}
                   <div className="px-4 mb-6">
                     <div className="w-full aspect-[21/9] rounded-lg bg-white/[0.03] border border-white/5 relative overflow-hidden animate-pulse">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
                     </div>
-                    {/* Dots moved below */}
                     <div className="w-full flex justify-center gap-1.5 mt-3">
                       <div className="w-4 h-1 bg-white/20 rounded-full" />
                       <div className="w-1 h-1 bg-white/5 rounded-full" />
@@ -105,7 +156,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Category Bar Mockup */}
+                  {/* ORIGINAL CATEGORY BAR */}
                   <div className="px-4 flex gap-1.5 mb-6">
                     {['BR', 'CS', 'LW', 'ELIM'].map((cat, i) => (
                       <div key={cat} className={`flex-1 h-9 rounded-sm flex items-center justify-center border font-black text-[9px] ${i === 0 ? 'bg-white text-black border-white' : 'bg-transparent text-white/40 border-white/10'}`}>
@@ -114,9 +165,9 @@ export default function Home() {
                     ))}
                   </div>
 
-                  {/* Fake App UI Content */}
-                  <div className="px-4 space-y-4 flex-1 overflow-y-auto pb-6 scrollbar-hide pt-4">
-                    {[1, 2, 3, 4, 5].map((idx) => (
+                  {/* ORIGINAL SKELETON LIST */}
+                  <div className="px-4 space-y-4 flex-1 overflow-hidden pt-4">
+                    {[1, 2, 3].map((idx) => (
                       <div key={idx} className="border border-white/5 rounded-sm bg-[#18181B]/50 p-4 flex gap-3 opacity-40">
                         <div className="w-16 h-16 rounded-sm bg-white/5" />
                         <div className="flex-1 space-y-3 pt-1">
@@ -127,29 +178,35 @@ export default function Home() {
                     ))}
                   </div>
 
-                  {/* Bottom Nav Bar Mockup */}
+                  {/* ORIGINAL BOTTOM NAV */}
                   <div className="px-6 py-4 border-t border-white/5 flex justify-between items-center bg-[#09090B]">
                     {[1, 2, 3, 4, 5].map(i => (
                       <div key={i} className={`w-3.5 h-3.5 rounded-full ${i === 1 ? 'bg-white' : 'bg-white/10'}`} />
                     ))}
                   </div>
+
+                  {/* Screen Reflection Overlay */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/[0.03] via-transparent to-white/[0.05] z-[110]" />
                 </div>
+
+                {/* Speaker Grill */}
+                <div className="absolute top-[1.4rem] left-1/2 -translate-x-1/2 w-8 h-1 bg-white/5 rounded-full z-[120]" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Features Section - Premium Grid */}
-        <section className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section id="platform" className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {[
             {
               title: 'PRO TOURNEYS',
               desc: 'Daily Free Fire Max, Battle Royale & Clash Squad tournaments with professional rules and high-stakes prize pools.',
               color: 'primary',
+              colorHex: '#8b5cf6',
               icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 21h8m-4-4v4M7 4h10M5 4v7a5 5 0 005 5h4a5 5 0 005-5V4M3 7h2m14 0h2" />
                 </svg>
               )
             },
@@ -157,29 +214,32 @@ export default function Home() {
               title: 'FAST PAYOUTS',
               desc: 'Experience lightning-fast withdrawals directly to your wallet within minutes.',
               color: 'cyan',
+              colorHex: '#06b6d4',
               icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               )
             },
             {
-              title: 'LIVE TRACKING',
-              desc: 'Stay updated with real-time match statistics, live leaderboards, and instant results.',
+              title: 'FAIR PLAY',
+              desc: 'Advanced anti-cheat protocols and active monitoring ensure a strictly hacker-free environment for pure competition.',
               color: 'primary',
+              colorHex: '#8b5cf6',
               icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0a.75.75 0 100-1.5.75.75 0 000 1.5zM3 16.125s1.5-3 4.5-3 4.5 3 4.5 3m-9 0h9M15 16.125s1.5-3 4.5-3 4.5 3 4.5 3m-9 0h9M6 13.125l1.5-6M18 13.125l-1.5-6" />
                 </svg>
               )
             },
             {
-              title: 'SQUAD CO-OP',
-              desc: 'Build your ultimate squad, manage team rosters, and compete in collaborative events.',
+              title: '24/7 SUPPORT',
+              desc: 'Get round-the-clock dedicated assistance for all your tournament, account, and payout queries.',
               color: 'cyan',
+              colorHex: '#06b6d4',
               icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                 </svg>
               )
             },
@@ -187,9 +247,10 @@ export default function Home() {
               title: 'ELITE RULES',
               desc: 'Strict tournament regulations and professional guidelines ensure every match is played by the book.',
               color: 'secondary',
+              colorHex: '#d946ef',
               icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.333 9-6.03 9-11.623 0-1.3-.243-2.541-.688-3.682A11.954 11.954 0 0112 2.714z" />
                 </svg>
               )
             },
@@ -197,25 +258,33 @@ export default function Home() {
               title: 'SECURE WALLET',
               desc: 'Industry-standard encryption and high-security protocols protect your assets and data.',
               color: 'primary',
+              colorHex: '#8b5cf6',
               icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zM10 6a2 2 0 114 0v4H10V6z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                 </svg>
               )
             },
           ].map((feature, i) => (
-            <div key={i} className="glass-panel p-10 rounded-xl group transition-all duration-500 hover:-translate-y-2 bg-white/[0.01] border-white/5 hover:border-white/20 relative overflow-hidden">
-              <div className={`absolute top-0 left-0 w-1 h-0 transition-all duration-500 group-hover:h-full bg-${feature.color}`} />
-              <div className={`w-16 h-16 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center text-${feature.color} mb-10 group-hover:scale-110 group-hover:bg-${feature.color} group-hover:text-white transition-all duration-500 shadow-xl`}>
-                {feature.icon}
+            <div key={i} className="glass-panel p-6 sm:p-10 rounded-xl group transition-all duration-500 hover:-translate-y-2 bg-white/[0.01] border-white/5 hover:border-white/20 relative overflow-hidden">
+              <div
+                className="absolute top-0 left-0 w-1 h-0 transition-all duration-500 group-hover:h-full"
+                style={{ backgroundColor: feature.colorHex }}
+              />
+              <div
+                className="w-16 h-16 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center mb-8 sm:mb-10 group-hover:scale-110 group-hover:text-white transition-all duration-500 shadow-xl"
+                style={{ color: feature.colorHex }}
+              >
+                <div className="group-hover:hidden transition-all">{feature.icon}</div>
+                <div className="hidden group-hover:block transition-all" style={{ color: 'white' }}>{feature.icon}</div>
               </div>
-              <h3 className="text-2xl font-black tracking-widest uppercase italic mb-4">{feature.title}</h3>
-              <p className="text-base font-medium text-muted-foreground leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-black tracking-widest uppercase italic mb-4">{feature.title}</h3>
+              <p className="text-sm sm:text-base font-medium text-muted-foreground leading-relaxed">
                 {feature.desc}
               </p>
               <div className="mt-8 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <span className={`text-[10px] font-black tracking-widest uppercase text-${feature.color}`}>Learn More</span>
-                <svg className={`w-3 h-3 text-${feature.color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M13 5l7 7-7 7M5 12h14" /></svg>
+                <span className="text-[10px] font-black tracking-widest uppercase" style={{ color: feature.colorHex }}>Learn More</span>
+                <svg className="w-3 h-3" style={{ color: feature.colorHex }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M13 5l7 7-7 7M5 12h14" /></svg>
               </div>
             </div>
           ))}
@@ -232,7 +301,7 @@ export default function Home() {
                 <img src="/appicon.png" alt="Mighty Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <span className="font-black tracking-[0.4em] text-2xl uppercase italic block leading-none">MIGHTY</span>
+                <span className="font-black tracking-[0.4em] text-2xl uppercase italic block leading-none pe-4 -me-4">MIGHTY</span>
                 <span className="text-[8px] font-black tracking-[0.5em] text-primary uppercase mt-1 block">Esports Platform</span>
               </div>
             </div>
@@ -257,16 +326,16 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hidden md:flex flex-col items-center md:items-start gap-6">
-            <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/40 border-l-2 border-primary pl-4">Quick Links</h4>
-            <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col items-center md:items-start gap-6">
+            <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/40 md:border-l-2 border-primary md:pl-4">Quick Links</h4>
+            <div className="grid grid-cols-2 md:flex md:flex-col gap-4 w-full place-items-center md:place-items-start">
               {[
-                { name: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-                { name: 'Tournaments', icon: 'M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z' },
-                { name: 'About Us', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-                { name: 'Features', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' }
+                { name: 'Home', path: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+                { name: 'Tourneys', path: '/#platform', icon: 'M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z' },
+                { name: 'About', path: '/about', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+                { name: 'Features', path: '/#platform', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' }
               ].map(link => (
-                <a key={link.name} href="#" className="flex items-center gap-3 text-xs font-bold text-muted-foreground hover:text-white transition-all group">
+                <a key={link.name} href={link.path} className="flex items-center gap-3 text-xs font-bold text-muted-foreground hover:text-white transition-all group">
                   <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/30 transition-all">
                     <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d={link.icon}></path></svg>
                   </div>
@@ -276,16 +345,16 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hidden md:flex flex-col items-center md:items-start gap-6">
-            <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/40 border-l-2 border-secondary pl-4">Legal & Connect</h4>
-            <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col items-center md:items-start gap-6">
+            <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/40 md:border-l-2 border-secondary md:pl-4">Legal & Connect</h4>
+            <div className="grid grid-cols-2 md:flex md:flex-col gap-4 w-full place-items-center md:place-items-start">
               {[
-                { name: 'Privacy Policy', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
-                { name: 'Terms & Conditions', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
-                { name: 'Refund Policy', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
-                { name: 'Connect', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' }
+                { name: 'Privacy', path: '/privacy', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+                { name: 'Terms', path: '/terms', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+                { name: 'Refunds', path: '/refunds', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
+                { name: 'Connect', path: '/#connect', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' }
               ].map(link => (
-                <a key={link.name} href="#" className="flex items-center gap-3 text-xs font-bold text-muted-foreground hover:text-white transition-all group">
+                <a key={link.name} href={link.path} className="flex items-center gap-3 text-xs font-bold text-muted-foreground hover:text-white transition-all group">
                   <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 flex items-center justify-center group-hover:bg-secondary/20 group-hover:border-secondary/30 transition-all">
                     <svg className="w-4 h-4 text-muted-foreground group-hover:text-secondary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d={link.icon}></path></svg>
                   </div>
